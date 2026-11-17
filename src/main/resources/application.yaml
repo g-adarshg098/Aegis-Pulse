@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT}
 
 spring:
   main:
@@ -15,12 +15,12 @@ spring:
   ai:
     # 1. Local Ollama Configuration (Runs offline on your RTX 2050)
     ollama:
-      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      base-url: ${OLLAMA_BASE_URL}
       init:
         pull-model-strategy: never
       chat:
         options:
-          model: ${OLLAMA_MODEL:llama3.2} # Or deepseek-r1:7b depending on your local model preference
+          model: ${OLLAMA_MODEL} # Or deepseek-r1:7b depending on your local model preference
           temperature: 0.7
 
     # 2. Groq Cloud Configuration (OpenAI API-compatible endpoint for lightning-fast inference)
@@ -38,7 +38,7 @@ spring:
         # Spring Boot 3.4+ / Spring AI auto-configuration handles data-source binding,
         # but you can specify table schema and dimensions matching your embedding model here:
         initialize-schema: true
-        vector-dimensions: ${VECTOR_DIMENSIONS:1536} # Adjust based on your chosen embedding model dimension
+        vector-dimensions: ${VECTOR_DIMENSIONS} # Adjust based on your chosen embedding model dimension
 
   # 4. Relational Database Configuration (PostgreSQL)
   datasource:
