@@ -1,0 +1,67 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: aegis-pulse-engine
+
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+  ai:
+    # 1. Local Ollama Configuration (Runs offline on your RTX 2050)
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      init:
+        pull-model-strategy: never
+      chat:
+        options:
+          model: ${OLLAMA_MODEL:llama3.2} # Or deepseek-r1:7b depending on your local model preference
+          temperature: 0.7
+
+    # 2. Groq Cloud Configuration (OpenAI API-compatible endpoint for lightning-fast inference)
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: ${GROQ_BASE_URL}
+      chat:
+        options:
+          model: ${GROQ_MODEL}
+          temperature: 0.5
+
+    # 3. Vector Store Configuration (PostgreSQL with pgvector for RAG)
+    vectorstore:
+      pgvector:
+        # Spring Boot 3.4+ / Spring AI auto-configuration handles data-source binding,
+        # but you can specify table schema and dimensions matching your embedding model here:
+        initialize-schema: true
+        vector-dimensions: ${VECTOR_DIMENSIONS:1536} # Adjust based on your chosen embedding model dimension
+
+  # 4. Relational Database Configuration (PostgreSQL)
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # 5. Redis Configuration (For chat memory and semantic caching)
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
+    com.aegispulse: DEBUG
